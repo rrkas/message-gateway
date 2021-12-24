@@ -52,7 +52,7 @@ public class SmsApiResource {
 
     @RequestMapping(method = RequestMethod.POST, consumes = {"application/json"}, produces = {"application/json"})
     public ResponseEntity<Void> sendShortMessages(@RequestHeader(MessageGatewayConstants.TENANT_IDENTIFIER_HEADER) final String tenantId,
-    		@RequestHeader(MessageGatewayConstants.TENANT_APPKEY_HEADER) final String appKey, 
+    		@RequestHeader(MessageGatewayConstants.TENANT_APPKEY_HEADER) final String appKey,
     		@RequestBody final List<SMSMessage> payload) {
 		logger.info("Payload "+ payload.get(0).getMessage());
     	this.smsMessageService.sendShortMessage(tenantId, appKey, payload);
@@ -61,9 +61,16 @@ public class SmsApiResource {
 
     @RequestMapping(value = "/report", method = RequestMethod.POST, consumes = {"application/json"}, produces = {"application/json"})
     public ResponseEntity<Collection<DeliveryStatusData>> getDeliveryStatus(@RequestHeader(MessageGatewayConstants.TENANT_IDENTIFIER_HEADER) final String tenantId,
-    		@RequestHeader(MessageGatewayConstants.TENANT_APPKEY_HEADER) final String appKey, 
+    		@RequestHeader(MessageGatewayConstants.TENANT_APPKEY_HEADER) final String appKey,
     		@RequestBody final Collection<Long> internalIds) {
     	Collection<DeliveryStatusData> deliveryStatus = this.smsMessageService.getDeliveryStatus(tenantId, appKey, internalIds) ;
     	return new ResponseEntity<>(deliveryStatus, HttpStatus.OK);
     }
+
+	@RequestMapping(value = "/report/internalId", method = RequestMethod.POST, consumes = {"application/json"}, produces = {"application/json"})
+	public ResponseEntity<DeliveryStatusData> getDeliveryStatusByInternalId(@RequestHeader("internalId") final Long internalId) {
+		DeliveryStatusData deliveryStatus = this.smsMessageService.getDeliveryStatusByInternalId(internalId);
+		return new ResponseEntity<>(deliveryStatus, HttpStatus.OK);
+	}
+
 }

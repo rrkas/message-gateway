@@ -106,7 +106,17 @@ public class SMSMessageService {
 		Collection<DeliveryStatusData> datas = this.jdbcTemplate.query(query, mapper, new Object[] {tenant.getId()}) ;
 		return datas ;
 	}
-	
+
+	public DeliveryStatusData getDeliveryStatusByInternalId(final Long internalIds) {
+		DeliveryStatusDataRowMapper mapper = new DeliveryStatusDataRowMapper() ;
+		String internaIdString = internalIds.toString() ;
+		internaIdString = internaIdString.replace("[", "(") ;
+		internaIdString = internaIdString.replace("]", ")") ;
+		String query = mapper.schema() + " where m.tenant_id=?"+" and m.internal_id in " +internaIdString;
+		DeliveryStatusData data = this.jdbcTemplate.query(query, mapper).get(0);
+		return data;
+	}
+
 	class DeliveryStatusDataRowMapper implements RowMapper<DeliveryStatusData> {
 
 		private final StringBuilder buff = new StringBuilder() ;
